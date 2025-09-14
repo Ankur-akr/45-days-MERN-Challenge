@@ -1,4 +1,4 @@
-# 🏗️ Work Experience CRUD API
+# Work Experience CRUD API
 
 A professional **Work Experience Management System** built with **Node.js, Express, MongoDB, and Mongoose**.
 

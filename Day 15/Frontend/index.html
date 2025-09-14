@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow - Team Task Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #5d56f9;
+      --secondary-color: #ffffff;
+      --background-color: #f7f9fc;
+      --card-background: #ffffff;
+      --text-color: #1a202c;
+      --subtle-text: #718096;
+      --border-color: #e2e8f0;
+      --shadow-light: rgba(0, 0, 0, 0.05);
+      --shadow-strong: rgba(0, 0, 0, 0.1);
+      --todo-color: #63b3ed;
+      --inprogress-color: #f6ad55;
+      --review-color: #a0aec0;
+      --done-color: #48bb78;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --primary-color: #a879ff;
+        --secondary-color: #2d3748;
+        --background-color: #1a202c;
+        --card-background: #2d3748;
+        --text-color: #e2e8f0;
+        --subtle-text: #a0aec0;
+        --border-color: #4a5568;
+        --shadow-light: rgba(0, 0, 0, 0.3);
+        --shadow-strong: rgba(0, 0, 0, 0.5);
+        --todo-color: #4299e1;
+        --inprogress-color: #dd6b20;
+        --review-color: #718096;
+        --done-color: #38a169;
+      }
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--primary-color);
+    }
+    
+    .user-info {
+      font-size: 0.9rem;
+      color: var(--subtle-text);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .card {
+      background-color: var(--card-background);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px var(--shadow-light), 0 2px 4px -1px var(--shadow-light);
+      transition: transform 0.2s ease-in-out;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px var(--shadow-strong), 0 4px 6px -2px var(--shadow-strong);
+    }
+
+    .stat-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .stat-card {
+      text-align: center;
+    }
+
+    .stat-card h3 {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--subtle-text);
+      margin: 0;
+    }
+
+    .stat-card p {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0.5rem 0 0;
+      color: var(--primary-color);
+    }
+
+    .task-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .task-form h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .form-group input, .form-group select {
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      transition: all 0.2s ease-in-out;
+    }
+    
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(93, 86, 249, 0.2);
+    }
+    
+    .btn {
+      background-color: var(--primary-color);
+      color: var(--secondary-color);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+      box-shadow: 0 4px 6px var(--shadow-light);
+    }
+    
+    .btn:hover {
+      background-color: var(--primary-color);
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background-color: #ef4444;
+    }
+    .btn-danger:hover {
+      background-color: #dc2626;
+    }
+    
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .column {
+      padding: 1.5rem;
+      background-color: var(--card-background);
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px -1px var(--shadow-light), 0 2px 4px -1px var(--shadow-light);
+      min-height: 400px;
+      border: 2px dashed transparent;
+      transition: border-color 0.2s ease-in-out;
+    }
+    
+    .column.drag-over {
+      border-color: var(--primary-color);
+    }
+    
+    .column-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 1rem;
+      text-transform: capitalize;
+    }
+    
+    .tasks-container {
+      min-height: 100px;
+    }
+
+    .task-card {
+      background-color: var(--background-color);
+      padding: 1rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 3px var(--shadow-light);
+      margin-bottom: 1rem;
+      cursor: grab;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    }
+    
+    .task-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px var(--shadow-strong);
+    }
+    
+    .task-card.is-dragging {
+      opacity: 0.6;
+      transform: scale(0.95);
+      cursor: grabbing;
+    }
+
+    .task-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    .task-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--subtle-text);
+      margin-top: 0.5rem;
+    }
+    
+    .task-actions {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      display: flex;
+      gap: 0.25rem;
+    }
+    
+    .task-actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--subtle-text);
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+    
+    .task-actions button:hover {
+      color: var(--primary-color);
+    }
+    
+    .auth-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    
+    .auth-card {
+      width: 90%;
+      max-width: 400px;
+      padding: 2rem;
+      background-color: var(--card-background);
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px var(--shadow-strong);
+    }
+    
+    .auth-card h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: var(--primary-color);
+    }
+    
+    .auth-card p {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: var(--subtle-text);
+    }
+    
+    .auth-card a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .auth-card a:hover {
+      text-decoration: underline;
+    }
+    
+    .input-field {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+  </style>
+</head>
+<body>
+  <div id="auth-container" class="auth-container">
+    <div class="card auth-card">
+      <h2>TaskFlow Login</h2>
+      <input id="email" type="email" placeholder="Email" class="input-field">
+      <input id="password" type="password" placeholder="Password" class="input-field">
+      <button onclick="login()" class="btn">Login</button>
+      <p>Or <a href="#" onclick="showRegister()">Register</a></p>
+
+      <div id="register" style="display:none;">
+        <input id="name" type="text" placeholder="Name" class="input-field">
+        <input id="regEmail" type="email" placeholder="Email" class="input-field">
+        <input id="regPassword" type="password" placeholder="Password" class="input-field">
+        <button onclick="register()" class="btn">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="app" style="display:none;" class="container">
+    <header>
+      <h1>TaskFlow</h1>
+      <div class="user-info">
+        <span id="user-info-name"></span>
+        <button onclick="logout()" class="btn btn-danger">Logout</button>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <section class="stat-cards">
+        <div class="card stat-card">
+          <h3>Total Tasks</h3>
+          <p id="totalTasks">0</p>
+        </div>
+        <div class="card stat-card">
+          <h3>Completed</h3>
+          <p id="completed">0</p>
+        </div>
+        <div class="card stat-card">
+          <h3>Teams</h3>
+          <p id="teams">0</p>
+        </div>
+      </section>
+
+      <section class="card task-form-card">
+        <h3>Create New Task</h3>
+        <div class="task-form">
+          <div class="form-group">
+            <input id="taskTitle" type="text" placeholder="Task Title">
+          </div>
+          <div class="form-group">
+            <select id="taskStatus">
+              <option value="todo">To Do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="review">Review</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+          <button onclick="createTask()" class="btn">Add Task</button>
+        </div>
+      </section>
+
+      <section>
+        <div class="kanban-board">
+          <div class="column" id="todo" data-status="todo">
+            <h3 class="column-title">To Do</h3>
+            <div class="tasks-container"></div>
+          </div>
+          <div class="column" id="in-progress" data-status="in-progress">
+            <h3 class="column-title">In Progress</h3>
+            <div class="tasks-container"></div>
+          </div>
+          <div class="column" id="review" data-status="review">
+            <h3 class="column-title">Review</h3>
+            <div class="tasks-container"></div>
+          </div>
+          <div class="column" id="done" data-status="done">
+            <h3 class="column-title">Done</h3>
+            <div class="tasks-container"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "http://localhost:4000/api";
+    // Using a CDN to ensure the library loads correctly
+    const socket = io("http://localhost:4000");
+
+    let token = localStorage.getItem("token");
+    let user = null;
+
+    // DOM Elements
+    const authContainer = document.getElementById("auth-container");
+    const appContainer = document.getElementById("app");
+    const registerForm = document.getElementById("register");
+    const userInfoNameEl = document.getElementById("user-info-name");
+    const taskTitleInput = document.getElementById("taskTitle");
+    const taskStatusSelect = document.getElementById("taskStatus");
+    const columns = document.querySelectorAll(".column");
+
+    // Function to render the Kanban board from fetched tasks
+    function renderKanban(tasks) {
+      const containers = {};
+      columns.forEach(col => {
+        const container = col.querySelector(".tasks-container");
+        container.innerHTML = "";
+        containers[col.dataset.status] = container;
+      });
+
+      tasks.forEach(task => {
+        const taskCard = document.createElement("div");
+        taskCard.className = "task-card";
+        taskCard.draggable = true;
+        taskCard.dataset.id = task._id;
+        taskCard.dataset.status = task.status;
+        taskCard.innerHTML = `
+          <h4 class="task-title">${task.title}</h4>
+          <div class="task-details">
+            <span>Assigned: ${task.assignees && task.assignees.length > 0 ? task.assignees[0].name : 'N/A'}</span>
+            <span>Created: ${new Date(task.createdAt).toLocaleDateString()}</span>
+          </div>
+          <div class="task-actions">
+            <button onclick="editTask('${task._id}')">&#9998;</button>
+            <button onclick="deleteTask('${task._id}')">&times;</button>
+          </div>
+        `;
+        taskCard.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", e.target.dataset.id);
+          setTimeout(() => e.target.classList.add("is-dragging"), 0);
+        });
+        taskCard.addEventListener("dragend", (e) => {
+          e.target.classList.remove("is-dragging");
+        });
+        
+        if (containers[task.status]) {
+          containers[task.status].appendChild(taskCard);
+        }
+      });
+    }
+
+    // Function to handle dropping a task on a column
+    columns.forEach(column => {
+      column.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        column.classList.add("drag-over");
+      });
+      column.addEventListener("dragleave", () => {
+        column.classList.remove("drag-over");
+      });
+      column.addEventListener("drop", async (e) => {
+        e.preventDefault();
+        column.classList.remove("drag-over");
+        const taskId = e.dataTransfer.getData("text/plain");
+        const newStatus = column.dataset.status;
+        
+        try {
+          await fetch(`${API_URL}/tasks/${taskId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({ status: newStatus })
+          });
+        } catch (error) {
+          console.error("Error updating task status:", error);
+        }
+      });
+    });
+
+    // --- API Calls ---
+    function showRegister() {
+      registerForm.style.display = "block";
+    }
+
+    async function register() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+
+      try {
+        const res = await fetch(`${API_URL}/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("Registered successfully! You can now log in.");
+        } else {
+          alert(data.message || "Error registering.");
+        }
+      } catch (err) {
+        alert("Network error. Please try again.");
+      }
+    }
+
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const res = await fetch(`${API_URL}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          token = data.data.token;
+          user = data.data.user;
+          localStorage.setItem("token", token);
+          authContainer.style.display = "none";
+          appContainer.style.display = "block";
+          userInfoNameEl.innerText = user.name;
+          loadDashboard();
+          loadTasks();
+          setupSocketListeners();
+        } else {
+          alert(data.message || "Login failed.");
+        }
+      } catch (err) {
+        alert("Network error. Please try again.");
+      }
+    }
+
+    async function logout() {
+      token = null;
+      localStorage.removeItem("token");
+      appContainer.style.display = "none";
+      authContainer.style.display = "flex";
+      socket.disconnect(); // Disconnect from socket server
+    }
+
+    async function loadDashboard() {
+      try {
+        const res = await fetch(`${API_URL}/stats/dashboard`);
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById("totalTasks").innerText = data.data.totalTasks;
+          document.getElementById("completed").innerText = data.data.completed;
+          document.getElementById("teams").innerText = data.data.teams;
+        }
+      } catch (err) {
+        console.error("Error loading dashboard stats:", err);
+      }
+    }
+
+    async function createTask() {
+      const title = taskTitleInput.value;
+      const status = taskStatusSelect.value;
+      if (!title) {
+        alert("Task title cannot be empty.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/tasks`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({ title, status })
+        });
+        const data = await res.json();
+        if (data.success) {
+          taskTitleInput.value = "";
+          taskStatusSelect.value = "todo";
+        } else {
+          alert(data.message || "Error creating task.");
+        }
+      } catch (err) {
+        alert("Network error. Please try again.");
+      }
+    }
+
+    async function loadTasks() {
+      try {
+        const res = await fetch(`${API_URL}/tasks`, {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderKanban(data.data);
+        } else {
+          console.error(data.message || "Error loading tasks.");
+        }
+      } catch (err) {
+        console.error("Network error loading tasks:", err);
+      }
+    }
+
+    async function editTask(id) {
+      const newTitle = prompt("Enter new title:");
+      if (newTitle) {
+        try {
+          await fetch(`${API_URL}/tasks/${id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({ title: newTitle })
+          });
+        } catch (err) {
+          alert("Network error. Please try again.");
+        }
+      }
+    }
+
+    async function deleteTask(id) {
+      const confirmed = window.confirm("Are you sure you want to delete this task?");
+      if (confirmed) {
+        try {
+          await fetch(`${API_URL}/tasks/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": "Bearer " + token }
+          });
+        } catch (err) {
+          alert("Network error. Please try again.");
+        }
+      }
+    }
+
+    // --- Socket.io Real-time Updates ---
+    function setupSocketListeners() {
+      socket.on("task:created", () => loadTasks());
+      socket.on("task:updated", () => loadTasks());
+      socket.on("task:deleted", () => loadTasks());
+    }
+
+    // Initial check on load
+    if (token) {
+      authContainer.style.display = "none";
+      appContainer.style.display = "block";
+      loadTasks();
+      loadDashboard();
+      setupSocketListeners();
+    }
+  </script>
+</body>
+</html>

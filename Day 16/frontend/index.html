@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Combined API Demo</title>
+  <style>
+    body { font-family: Arial; padding:20px; }
+    section { margin-bottom:20px; }
+  </style>
+</head>
+<body>
+  <h1>Combined API Frontend</h1>
+  <section>
+    <h2>Search</h2>
+    <input id="q" placeholder="Search term">
+    <button onclick="search()">Search</button>
+    <pre id="searchResult"></pre>
+  </section>
+  <section>
+    <h2>Dashboard</h2>
+    <button onclick="dashboard()">Load Dashboard</button>
+    <pre id="dashResult"></pre>
+  </section>
+  <script>
+    const API = 'http://localhost:3000/api';
+    async function search(){
+      const q = document.getElementById('q').value;
+      const res = await fetch(`${API}/search?q=${q}`);
+      const data = await res.json();
+      document.getElementById('searchResult').innerText = JSON.stringify(data,null,2);
+    }
+    async function dashboard(){
+      const res = await fetch(`${API}/profile/dashboard`);
+      const data = await res.json();
+      document.getElementById('dashResult').innerText = JSON.stringify(data,null,2);
+    }
+  </script>
+</body>
+</html>

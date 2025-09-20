@@ -1,0 +1,23 @@
+{
+  "name": "day17-api-testing",
+  "version": "1.0.0",
+  "description": "API with Jest + Supertest tests (Day 17: API Testing & QA)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --coverage"
+  },
+  "author": "generated-by-chatgpt",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "jest": "^29.6.1",
+    "supertest": "^6.4.2",
+    "nodemon": "^2.0.22"
+  }
+}

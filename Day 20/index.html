@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Day 20 - Props & Reusability</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f1f5f9;
+        margin: 0;
+        padding: 40px;
+      }
+      h1 {
+        text-align: center;
+        color: #1f2937;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        transition: transform 0.2s ease;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+      }
+      .card h2 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #111827;
+      }
+      .card p {
+        margin: 10px 0 0;
+        color: #4b5563;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>My Projects</h1>
+    <div id="root"></div>
+
+    <!-- React and ReactDOM via CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- React Code -->
+    <script type="text/babel">
+      // Reusable ProjectCard component
+      function ProjectCard({ title, description }) {
+        return (
+          <div className="card">
+            <h2>{title}</h2>
+            <p>{description}</p>
+          </div>
+        );
+      }
+
+      // App component using multiple ProjectCard instances
+      function App() {
+        return (
+          <div className="grid">
+            <ProjectCard
+              title="Blog Platform Backend"
+              description="Built a complete blog backend with authentication, CMS, and CRUD APIs."
+            />
+            <ProjectCard
+              title="E-Commerce API"
+              description="Developed RESTful APIs for products, cart, checkout, and payment integration."
+            />
+            <ProjectCard
+              title="Portfolio Website"
+              description="Created a personal portfolio using React to showcase my projects and skills."
+            />
+            <ProjectCard
+              title="Chat Application"
+              description="Real-time chat app with WebSocket integration and secure user authentication."
+            />
+          </div>
+        );
+      }
+
+      // Render to DOM
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+[
+  {
+    "userId": "user_1",
+    "company": "Acme Corp",
+    "role": "Software Engineer",
+    "startDate": "2020-07-01",
+    "endDate": "2023-05-31",
+    "isCurrent": false,
+    "location": "Bengaluru, India",
+    "description": "Worked on payment APIs.",
+    "technologies": [
+      "Node.js",
+      "Express",
+      "MongoDB"
+    ]
+  },
+  {
+    "userId": "user_1",
+    "company": "Beta Labs",
+    "role": "Senior Engineer",
+    "startDate": "2023-06-01",
+    "isCurrent": true,
+    "location": "Remote",
+    "description": "Leading backend platform.",
+    "technologies": [
+      "Go",
+      "gRPC",
+      "Postgres"
+    ]
+  }
+]

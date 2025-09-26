@@ -1,0 +1,38 @@
+body {
+  /* Updated font stack for a modern look */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  /* Lighter, subtle background */
+  background: #f8f9fa;
+  color: #343a40;
+}
+
+.app {
+  padding: 2rem 1rem;
+  max-width: 1200px; /* Increased max-width for more content space */
+  margin: auto;
+}
+
+h1 {
+  /* Prominent header with a touch of color */
+  text-align: center;
+  margin-bottom: 2.5rem;
+  color: #007bff; /* Primary blue color */
+  font-size: 2.5rem;
+  font-weight: 700;
+  border-bottom: 3px solid #007bff;
+  display: inline-block;
+  padding-bottom: 0.5rem;
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+  
+}
+
+.grid {
+  /* Main grid container remains the same, ensuring responsiveness */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjusted min-width */
+  gap: 2rem; /* Increased gap for better visual separation */
+}

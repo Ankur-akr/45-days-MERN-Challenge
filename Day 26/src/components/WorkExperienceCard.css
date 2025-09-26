@@ -1,0 +1,60 @@
+.card {
+  /* Clean, professional card with a defined border and elevated shadow */
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  border: 1px solid #e9ecef; /* Subtle border */
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08); /* Stronger shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  /* More noticeable hover effect */
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+.role {
+  /* Role stands out as the primary title */
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #212529; /* Darker text */
+  margin-bottom: 0.25rem;
+}
+
+.company {
+  /* Secondary title for the company */
+  color: #007bff; /* Primary color highlight */
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.duration, .location {
+  /* Lighter text for metadata */
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.tech {
+  /* Separator for the technologies section */
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #ced4da;
+}
+
+.badge {
+  /* Updated badge style for a softer look */
+  display: inline-block;
+  background: #e9ecef; /* Light gray background */
+  color: #495057; /* Darker text for contrast */
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px; /* Fully rounded corners */
+  margin: 0.25rem 0.25rem 0.25rem 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}

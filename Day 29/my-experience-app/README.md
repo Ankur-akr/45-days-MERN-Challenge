@@ -1,16 +1,57 @@
-# React + Vite
+Day 29: Mastering useEffect & Data Fetching
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🚀 Part of the MERN Stack Ascent Challenge (Day 29)
+This project demonstrates advanced React useEffect patterns and professional data fetching techniques for managing work experience data.
 
-Currently, two official plugins are available:
+🎯 Challenge Objective
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Understand useEffect lifecycle (mount, update, unmount)
 
-## React Compiler
+Master dependency arrays and when effects run
 
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Build custom hooks for API operations (useExperienceAPI)
 
-## Expanding the ESLint configuration
+Implement professional data fetching patterns
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Prevent memory leaks with proper cleanup
+
+Visualize state changes and activity logs
+
+📋 Features
+
+✅ Custom hook useExperienceAPI for all API operations
+
+✅ Multiple useEffect examples with different dependency arrays
+
+✅ Loading, error, and empty states for professional UX
+
+✅ Form validation and dynamic behavior for work experience management
+
+✅ Real-time activity logging to monitor useEffect and state changes
+
+✅ Clean, modular, and reusable React components
+
+🛠 Tech Stack
+
+React 18 (Functional Components + Hooks)
+
+CSS for styling and responsive UI
+
+REST API backend (Day 25 Work Experience API)
+
+📂 Project Structure
+day29_useeffect_frontend/
+├── public/
+│   └── index.html
+├── src/
+│   ├── components/
+│   │   ├── WorkExperienceCard.js
+│   │   ├── WorkExperienceList.js
+│   │   └── WorkExperienceForm.js
+│   ├── hooks/
+│   │   └── useExperienceAPI.js
+│   ├── App.js
+│   ├── App.css
+│   └── index.js
+├── package.json
+└── README.md

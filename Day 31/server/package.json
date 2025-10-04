@@ -1,0 +1,22 @@
+{
+  "name": "mern-day31-api",
+  "version": "1.0.0",
+  "description": "Day 31: Project Scaffolding & API Finalization - MERN Stack Ascent",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "Ankur Rai",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

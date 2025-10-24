@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "role": "Frontend Developer Intern",
+    "company": "Tech Solutions Pvt. Ltd.",
+    "duration": "June 2024 - August 2024",
+    "description": "Built responsive UI components in React and optimized performance by 20%."
+  },
+  {
+    "id": 2,
+    "role": "Web Developer",
+    "company": "CodeCraft Labs",
+    "duration": "January 2023 - May 2024",
+    "description": "Developed full-stack web apps using React, Node.js, and MongoDB."
+  },
+  {
+    "id": 3,
+    "role": "UI/UX Designer",
+    "company": "DesignHub",
+    "duration": "May 2022 - December 2022",
+    "description": "Created interactive prototypes and improved overall user satisfaction."
+  }
+]

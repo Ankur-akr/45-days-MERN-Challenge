@@ -1,0 +1,14 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "Portfolio Website",
+      "description": "A personal portfolio site using React."
+    },
+    {
+      "id": 2,
+      "title": "Task Manager",
+      "description": "Full-stack MERN task management app."
+    }
+  ]
+}
